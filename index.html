@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monalisa | Research Scholar</title>
+    <meta name="description" content="Academic portfolio of Monalisa Sahoo. Research in Nanotechnology, Energy Science, and Photocatalysis.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        sage: {
+                            50: '#f4f7f5', 100: '#e3ebe6', 200: '#c5d9cd', 300: '#9dbfa9',
+                            400: '#759f84', 500: '#558266', 600: '#41664f', 700: '#355240',
+                            800: '#2c4235', 900: '#25372d',
+                        },
+                        stone: {
+                            50: '#fafaf9', 100: '#f5f5f4', 800: '#292524',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.5s ease-out; }
+        .nav-link.active { color: #558266; border-bottom: 2px solid #558266; }
+
+        /* --- ADMIN CONTROLS --- */
+        .admin-only { display: none !important; }
+        
+        /* Visible ONLY when body has 'editing-active' class */
+        body.editing-active .admin-only { display: flex !important; }
+        body.editing-active .admin-btn-delete { display: block !important; }
+
+        /* Edit Mode Styles */
+        [contenteditable="true"] { outline: none; cursor: text; }
+        [contenteditable="true"]:hover { outline: 2px dashed #558266; outline-offset: 4px; border-radius: 2px; }
+        [contenteditable="true"]:focus { outline: 2px solid #558266; background-color: rgba(255,255,255,0.9); }
+        
+        .floating-action-btn {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 120;
+            transform: translateY(100px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .floating-action-btn.visible { transform: translateY(0); }
+
+        /* Add Buttons */
+        .admin-btn-add {
+            width: 100%; padding: 1.5rem; margin-bottom: 2rem;
+            border: 2px dashed #558266; border-radius: 0.5rem;
+            color: #558266; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;
+            justify-content: center; align-items: center; gap: 0.5rem;
+            cursor: pointer; background: rgba(85, 130, 102, 0.05); transition: all 0.2s;
+        }
+        .admin-btn-add:hover { background: rgba(85, 130, 102, 0.1); }
+        
+        /* Small Add Button */
+        .admin-btn-add-sm {
+            width: auto; padding: 0.5rem 1rem; margin-top: 0.5rem; margin-bottom: 1rem;
+            border: 1px dashed #558266; border-radius: 0.25rem;
+            color: #558266; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;
+            cursor: pointer; background: rgba(85, 130, 102, 0.05); transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 0.25rem;
+        }
+        .admin-btn-add-sm:hover { background: rgba(85, 130, 102, 0.1); }
+
+        /* Delete Buttons */
+        .admin-btn-delete {
+            position: absolute; top: -10px; right: -10px; z-index: 50;
+            background: #ef4444; color: white; padding: 0.5rem;
+            border-radius: 50%; transition: transform 0.2s; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; 
+        }
+        .admin-btn-delete:hover { transform: scale(1.1); background: #dc2626; }
+        
+        .admin-btn-delete-sm {
+            position: absolute; top: 0; right: -25px; 
+            color: #ef4444; cursor: pointer; display: none;
+        }
+        body.editing-active .admin-btn-delete-sm { display: block; }
+        .admin-btn-delete-sm:hover { color: #dc2626; }
+
+        /* Upload Buttons */
+        .admin-btn-upload {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 40; background: rgba(255,255,255,0.9); color: #558266;
+            padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); cursor: pointer;
+            align-items: center; gap: 0.5rem;
+        }
+
+        /* Loading Screen */
+        #global-loader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #fafaf9; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .loader-spinner {
+            width: 50px; height: 50px; border: 5px solid #e3ebe6;
+            border-top: 5px solid #558266; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .modal-overlay { transition: opacity 0.3s ease; opacity: 0; pointer-events: none; }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        
+        /* Research Modal Specific */
+        .research-modal {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(255, 255, 255, 0.98);
+            overflow-y: auto; display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .research-modal.open { display: block; }
+    </style>
+</head>
+<body class="font-sans text-stone-700 bg-stone-50 antialiased min-h-screen flex flex-col">
+
+    <div id="global-loader"><div class="loader-spinner"></div></div>
+
+    <nav class="fixed w-full bg-white/95 backdrop-blur-sm z-50 border-b border-stone-100 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="switchTab('home')">
+                    <span class="font-serif text-2xl md:text-3xl text-sage-700 tracking-wide hover:opacity-80 transition-opacity">
+                        Monalisa<span class="text-stone-400 text-lg font-sans font-light ml-1 tracking-widest uppercase">Sahoo</span>
+                    </span>
+                </div>
+                
+                <div class="hidden lg:flex space-x-6 items-center">
+                    <button onclick="switchTab('home')" class="nav-link active">Home</button>
+                    <button onclick="switchTab('about')" class="nav-link">About</button>
+                    <button onclick="switchTab('research')" class="nav-link">Research</button>
+                    <button onclick="switchTab('publication')" class="nav-link">Publications</button>
+                    <button onclick="switchTab('Sketch')" class="nav-link">Sketch</button>
+                    <button onclick="switchTab('youtube')" class="nav-link">YouTube</button>
+                    <button onclick="switchTab('contact')" class="px-5 py-2 bg-sage-500 text-white font-medium text-sm tracking-wide uppercase hover:bg-sage-600 transition-all rounded-sm shadow-sm">Contact</button>
+                    
+                    <button id="nav-login-btn" onclick="toggleLoginModal()" class="flex items-center gap-2 px-3 py-2 rounded-lg text-stone-400 hover:bg-stone-100 hover:text-sage-600 transition-all">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span id="nav-login-text" class="text-xs font-bold uppercase hidden xl:block">Sign In</span>
+                    </button>
+                </div>
+                
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-stone-600 hover:text-sage-600 focus:outline-none p-2"><i class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-stone-100 absolute w-full shadow-lg h-screen overflow-y-auto pb-20 z-40">
+            <div class="px-6 pt-4 pb-6 space-y-4 flex flex-col text-center">
+                <button onclick="switchTab('home')" class="block w-full text-left px-3 py-3 border-b border-stone-100">Home</button>
+                <button onclick="switchTab('about')" class="block w-full text-left px-3 py-3 border-b border-stone-100">About</button>
+                <button onclick="switchTab('research')" class="block w-full text-left px-3 py-3 border-b border-stone-100">Research</button>
+                <button onclick="switchTab('publication')" class="block w-full text-left px-3 py-3 border-b border-stone-100">Publications</button>
+                <button onclick="switchTab('Sketch')" class="block w-full text-left px-3 py-3 border-b border-stone-100">Sketch</button>
+                <button onclick="switchTab('youtube')" class="block w-full text-left px-3 py-3 border-b border-stone-100">YouTube</button>
+                <button onclick="switchTab('contact')" class="block w-full text-left px-3 py-3 mt-2">Contact</button>
+                <button onclick="toggleLoginModal()" class="block w-full text-left px-3 py-3 text-stone-400 font-bold uppercase tracking-wide mt-2 border-t border-stone-100"><i data-lucide="log-in" class="w-4 h-4 inline mr-2"></i> Admin Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content" class="flex-grow pt-20">
+
+        <section id="home" class="page-section active">
+            <div class="relative h-[calc(100vh-80px)] min-h-[500px] flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 z-0 group">
+                    <img src="Mona1.jpeg" alt="Calming Nature Leaves" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-white/40 mix-blend-overlay"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-stone-50/90"></div>
+                    
+                    <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                    <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only !top-4 !right-4 !left-auto !translate-x-0 !translate-y-0 z-50">
+                        <i data-lucide="image" class="w-4 h-4"></i> <span class="text-xs ml-1">Change Background</span>
+                    </button>
+                </div>
+                <div class="relative z-10 text-center max-w-3xl px-6 animate-fade-in">
+                    <p class="text-sage-700 font-bold tracking-[0.2em] uppercase text-xs md:text-sm mb-4 editable-text">Nanotechnology & Energy Science</p>
+                    <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl text-stone-800 leading-tight mb-6 editable-text">Innovating for a <br> <span class="italic text-sage-600">Sustainable Future</span></h1>
+                    <p class="text-base md:text-xl text-stone-600 font-light mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed editable-text">I am a Research Scholar specializing in nanomaterials, photocatalysis, and energy solutions.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="switchTab('research')" class="px-10 py-3 md:py-4 bg-stone-800 text-white font-medium tracking-widest uppercase hover:bg-sage-600 shadow-md">Research Projects</button>
+                        <button onclick="switchTab('publication')" class="px-10 py-3 md:py-4 bg-white border border-stone-300 text-stone-700 font-medium tracking-widest uppercase hover:bg-stone-50 shadow-sm">Publications</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="page-section">
+            <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+                <div class="text-center mb-10 md:mb-16">
+                    <h3 class="text-sage-600 font-bold tracking-widest uppercase text-sm mb-3">Biography</h3>
+                    <h2 class="font-serif text-3xl md:text-4xl text-stone-800 editable-text">About Monalisa</h2>
+                    <div class="w-24 h-1 bg-sage-300 mx-auto mt-6"></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+                    <div class="relative group">
+                        <div class="absolute top-4 -left-4 w-full h-full border-2 border-sage-200 z-0"></div>
+                        <img src="Mona2.jpeg" class="relative z-10 w-full h-96 md:h-[500px] object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-lg">
+                        <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                        <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only z-50">
+                            <i data-lucide="camera" class="w-4 h-4"></i> <span class="text-xs ml-1">Change Profile</span>
+                        </button>
+                    </div>
+                    <div class="space-y-6 text-base md:text-lg text-stone-600 font-light leading-relaxed mt-4 md:mt-0">
+                        <p class="editable-text"><span class="text-xl md:text-2xl font-serif text-sage-700 italic">I am a Research Scholar</span> at IIT Guwahati.</p>
+                        <p class="editable-text">Currently, I also serve as a <strong>Visiting Researcher</strong> at National Sun Yat-sen University, Taiwan.</p>
+                        
+                        <div class="pt-6">
+                            <h4 class="font-bold text-stone-800 uppercase text-xs tracking-wider mb-4">Education</h4>
+                            <ul class="space-y-3 text-sm md:text-base" id="education-list">
+                                <li class="flex items-center relative group/item removable-item">
+                                    <i class="fas fa-graduation-cap text-sage-500 w-8"></i>
+                                    <span class="editable-text" contenteditable="true"><strong>Ph.D. Energy Science</strong>, IIT Guwahati</span>
+                                    <button onclick="deleteItem(this)" class="admin-btn-delete-sm admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </li>
+                                <li class="flex items-center relative group/item removable-item">
+                                    <i class="fas fa-university text-sage-500 w-8"></i>
+                                    <span class="editable-text" contenteditable="true"><strong>M.Tech Nanotechnology</strong>, VIT</span>
+                                    <button onclick="deleteItem(this)" class="admin-btn-delete-sm admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </li>
+                            </ul>
+                            <button onclick="addItem('education-list', 'education')" class="admin-btn-add-sm admin-only">
+                                <i data-lucide="plus" class="w-3 h-3"></i> Add Education
+                            </button>
+                        </div>
+
+                        <div class="pt-6 border-t border-stone-100 mt-6">
+                            <h4 class="font-bold text-stone-800 uppercase text-xs tracking-wider mb-4">Technical Proficiency</h4>
+                            <div id="skills-list" class="flex flex-wrap gap-2">
+                                <span class="relative group/item removable-item inline-flex items-center px-3 py-1 bg-sage-50 text-sage-700 rounded-full text-xs font-bold tracking-wide border border-sage-100">
+                                    <span class="editable-text" contenteditable="true">Nanomaterials</span>
+                                    <button onclick="deleteItem(this)" class="ml-2 text-sage-400 hover:text-red-500 admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                                </span>
+                                <span class="relative group/item removable-item inline-flex items-center px-3 py-1 bg-sage-50 text-sage-700 rounded-full text-xs font-bold tracking-wide border border-sage-100">
+                                    <span class="editable-text" contenteditable="true">Photocatalysis</span>
+                                    <button onclick="deleteItem(this)" class="ml-2 text-sage-400 hover:text-red-500 admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                                </span>
+                            </div>
+                            <button onclick="addItem('skills-list', 'skill')" class="admin-btn-add-sm admin-only">
+                                <i data-lucide="plus" class="w-3 h-3"></i> Add Skill
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="research" class="page-section">
+            <div class="bg-sage-50 py-16 md:py-24">
+                <div class="max-w-6xl mx-auto px-6">
+                    
+                    <div class="text-center mb-10 md:mb-16">
+                        <h3 class="text-sage-600 font-bold tracking-widest uppercase text-sm mb-3">Academic Work</h3>
+                        <h2 class="font-serif text-3xl md:text-4xl text-stone-800">Current Research Interests</h2>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 md:gap-8" id="research-grid">
+                        
+                        <div class="bg-white p-8 shadow-sm rounded-lg hover:shadow-lg transition-shadow border border-transparent hover:border-sage-200 relative group/card removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <i class="fas fa-atom text-sage-500 text-3xl mb-4"></i>
+                            <h3 class="font-serif text-xl text-stone-800 mb-3 editable-text" contenteditable="true">Heterogeneous Photocatalysis</h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4 editable-text" contenteditable="true">Developing advanced nanomaterials for heterogeneous photocatalysis to efficiently degrade pollutants...</p>
+                            <button onclick="toggleResearchModal(this)" class="text-sage-600 text-xs font-bold uppercase tracking-wider hover:text-stone-800 flex items-center gap-1">Read More <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                            
+                            <div class="research-modal">
+                                <div class="max-w-4xl mx-auto mt-20 p-8 md:p-12 relative bg-white shadow-2xl rounded-lg">
+                                    <button onclick="toggleResearchModal(this)" class="absolute top-6 right-6 text-stone-400 hover:text-stone-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                                    <div class="flex items-center gap-4 mb-8">
+                                        <i class="fas fa-atom text-sage-500 text-4xl"></i>
+                                        <h2 class="font-serif text-3xl md:text-4xl text-stone-800 editable-text" contenteditable="true">Heterogeneous Photocatalysis</h2>
+                                    </div>
+                                    <div class="prose prose-stone max-w-none text-stone-600 leading-loose">
+                                        <button onclick="addItem('modal-gallery-1', 'photo')" class="admin-btn-add-sm admin-only"><i data-lucide="image" class="w-3 h-3"></i> Add Figure</button>
+                                        <div id="modal-gallery-1" class="grid grid-cols-2 gap-4 mb-6">
+                                        </div>
+                                        <div class="editable-text min-h-[100px]" contenteditable="true">
+                                            <p>This research focuses on the synthesis and application of novel nanocomposites. By leveraging the unique properties of Type I and Type II heterostructures, we aim to enhance charge separation and improve photocatalytic efficiency under visible light irradiation.</p>
+                                            <p class="mt-4">Key areas include the degradation of organic dyes and the reduction of CO2 into value-added fuels.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-8 shadow-sm rounded-lg hover:shadow-lg transition-shadow border border-transparent hover:border-sage-200 relative group/card removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <i class="fas fa-water text-sage-500 text-3xl mb-4"></i>
+                            <h3 class="font-serif text-xl text-stone-800 mb-3 editable-text" contenteditable="true">Water Pollution Mitigation</h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4 editable-text" contenteditable="true">Utilizing nanotechnology to address climate change and water pollution.</p>
+                            <button onclick="toggleResearchModal(this)" class="text-sage-600 text-xs font-bold uppercase tracking-wider hover:text-stone-800 flex items-center gap-1">Read More <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                            
+                            <div class="research-modal">
+                                <div class="max-w-4xl mx-auto mt-20 p-8 md:p-12 relative bg-white shadow-2xl rounded-lg">
+                                    <button onclick="toggleResearchModal(this)" class="absolute top-6 right-6 text-stone-400 hover:text-stone-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                                    <div class="flex items-center gap-4 mb-8">
+                                        <i class="fas fa-water text-sage-500 text-4xl"></i>
+                                        <h2 class="font-serif text-3xl md:text-4xl text-stone-800 editable-text" contenteditable="true">Water Pollution Mitigation</h2>
+                                    </div>
+                                    <div class="prose prose-stone max-w-none text-stone-600 leading-loose">
+                                        <button onclick="addItem('modal-gallery-2', 'photo')" class="admin-btn-add-sm admin-only"><i data-lucide="image" class="w-3 h-3"></i> Add Figure</button>
+                                        <div id="modal-gallery-2" class="grid grid-cols-2 gap-4 mb-6"></div>
+                                        <div class="editable-text min-h-[100px]" contenteditable="true">
+                                            <p>Our work addresses critical water quality issues through the design of advanced filtration membranes and adsorbents. We investigate the surface chemistry of nanomaterials to optimize their interaction with heavy metals and organic pollutants.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-8 shadow-sm rounded-lg hover:shadow-lg transition-shadow border border-transparent hover:border-sage-200 relative group/card removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <i class="fas fa-microchip text-sage-500 text-3xl mb-4"></i>
+                            <h3 class="font-serif text-xl text-stone-800 mb-3 editable-text" contenteditable="true">Nanostructure Synthesis</h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4 editable-text" contenteditable="true">Investigation of charge carrier dynamics in Type I and Type II heterostructures.</p>
+                            <button onclick="toggleResearchModal(this)" class="text-sage-600 text-xs font-bold uppercase tracking-wider hover:text-stone-800 flex items-center gap-1">Read More <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                            
+                            <div class="research-modal">
+                                <div class="max-w-4xl mx-auto mt-20 p-8 md:p-12 relative bg-white shadow-2xl rounded-lg">
+                                    <button onclick="toggleResearchModal(this)" class="absolute top-6 right-6 text-stone-400 hover:text-stone-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                                    <div class="flex items-center gap-4 mb-8">
+                                        <i class="fas fa-microchip text-sage-500 text-4xl"></i>
+                                        <h2 class="font-serif text-3xl md:text-4xl text-stone-800 editable-text" contenteditable="true">Nanostructure Synthesis</h2>
+                                    </div>
+                                    <div class="prose prose-stone max-w-none text-stone-600 leading-loose">
+                                        <button onclick="addItem('modal-gallery-3', 'photo')" class="admin-btn-add-sm admin-only"><i data-lucide="image" class="w-3 h-3"></i> Add Figure</button>
+                                        <div id="modal-gallery-3" class="grid grid-cols-2 gap-4 mb-6"></div>
+                                        <div class="editable-text min-h-[100px]" contenteditable="true">
+                                            <p>This project explores the synthesis of novel nanostructures, including ZnO, TiO2, and carbon nanotubes (CNTs). We employ various spectroscopic techniques to understand the fundamental charge carrier dynamics that govern their optoelectronic properties.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <button onclick="addItem('research-grid', 'research-interest')" class="admin-btn-add admin-only mt-8"><i data-lucide="plus" class="w-4 h-4"></i> Add New Research Interest</button>
+
+
+                    <div class="mt-24 pt-16 border-t border-sage-200">
+                        <h3 class="font-serif text-2xl md:text-3xl text-stone-800 mb-10 text-center">Selected Ongoing & Submitted Work</h3>
+                        
+                        <div class="space-y-10 max-w-4xl mx-auto" id="ongoing-list">
+                            
+                            <div class="flex flex-col md:flex-row gap-6 relative group removable-item">
+                                <button onclick="deleteItem(this)" class="admin-btn-delete admin-only !left-auto !right-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <div class="w-32 flex-shrink-0 pt-1">
+                                    <span class="inline-block px-3 py-1 bg-sage-200 text-sage-800 text-[10px] font-bold uppercase tracking-widest rounded-sm editable-text" contenteditable="true">SUBMITTED</span>
+                                    <div class="text-stone-400 text-xs mt-2 italic editable-text" contenteditable="true">Under Review</div>
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="text-lg font-bold text-stone-800 mb-2 editable-text" contenteditable="true">Carbon-based Electrocatalysts</h4>
+                                    <p class="text-stone-600 text-sm leading-relaxed editable-text" contenteditable="true">
+                                        "Doping and defect engineering in carbon-based electrocatalysts for enhanced electrochemical CO2 reduction" — Investigating methods to improve efficiency in converting CO2 into useful chemical feedstocks.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col md:flex-row gap-6 relative group removable-item">
+                                <button onclick="deleteItem(this)" class="admin-btn-delete admin-only !left-auto !right-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <div class="w-32 flex-shrink-0 pt-1">
+                                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-[10px] font-bold uppercase tracking-widest rounded-sm editable-text" contenteditable="true">IN PREPARATION</span>
+                                    <div class="text-stone-400 text-xs mt-2 italic editable-text" contenteditable="true">Writing Process</div>
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="text-lg font-bold text-stone-800 mb-2 editable-text" contenteditable="true">PVDF-based Polymeric Membranes</h4>
+                                    <p class="text-stone-600 text-sm leading-relaxed editable-text" contenteditable="true">
+                                        "Sunlight responsive PVDF-based polymeric membrane coated with g-C3N4 for photocatalytic degradation of organic pollutants."
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <button onclick="addItem('ongoing-list', 'ongoing-work')" class="admin-btn-add admin-only mt-8"><i data-lucide="plus" class="w-4 h-4"></i> Add Ongoing Work</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="publication" class="page-section">
+            <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+                <div class="text-center mb-10 md:mb-12">
+                    <h3 class="text-sage-600 font-bold tracking-widest uppercase text-sm mb-3">Research Output</h3>
+                    <h2 class="font-serif text-3xl md:text-4xl text-stone-800">Publications</h2>
+                </div>
+
+                <button onclick="addItem('paper-list', 'year-group')" class="admin-btn-add admin-only">
+                    <i data-lucide="calendar-plus" class="w-5 h-5"></i> Add New Year Group
+                </button>
+
+                <div class="space-y-12" id="paper-list">
+                    <div id="fixed-submitted-group" class="year-group relative grid md:grid-cols-5 gap-8 group/year removable-item">
+                        <button onclick="deleteItem(this)" class="admin-btn-delete admin-only z-50 bg-stone-800 hover:bg-black"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                        <div class="md:col-span-1 text-left md:text-right md:pr-8 pt-2">
+                            <span class="text-2xl font-serif text-sage-600 font-bold italic editable-text" contenteditable="true">Submitted</span>
+                        </div>
+                        <div class="md:col-span-4 space-y-4 border-l-2 border-stone-100 pl-6 md:pl-0 md:border-l-0">
+                            <div class="year-papers-container space-y-4">
+                                <div class="paper-card bg-white p-6 rounded-lg shadow-sm border border-stone-100 hover:shadow-md transition-shadow relative group/paper removable-item">
+                                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                                    <h4 class="text-lg font-bold text-stone-800 mb-1 editable-text" contenteditable="true">Understanding Charge Carrier Dynamics in Type I and Type II Heterostructures</h4>
+                                    <p class="text-sm text-stone-500 italic mb-2 editable-text" contenteditable="true">Journal of Physics and Chemistry of Solids (Under Review)</p>
+                                    <p class="text-stone-600 leading-relaxed text-sm mb-3 editable-text" contenteditable="true"><strong>Thongam, D. D.</strong>, H. Chaturvedi</p>
+                                    <div class="flex flex-wrap gap-2 items-center mt-2">
+                                        <a href="#" target="_blank" class="inline-block px-4 py-2 bg-stone-100 text-stone-600 text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-sage-500 hover:text-white transition-colors">View Article</a>
+                                        <button onclick="updateLink(this)" class="admin-only p-2 text-sage-600 hover:text-sage-800 hover:bg-sage-50 rounded-full transition-colors" title="Change Link">
+                                            <i data-lucide="link" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="addPaperToYear(this)" class="admin-only w-full py-3 border-2 border-dashed border-sage-200 text-sage-500 text-sm font-bold uppercase tracking-wide hover:bg-sage-50 transition-colors rounded-lg flex justify-center items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Add Paper to this Year
+                            </button>
+                        </div>
+                    </div>
+                    <div class="year-group relative grid md:grid-cols-5 gap-8 group/year removable-item">
+                        <button onclick="deleteItem(this)" class="admin-btn-delete admin-only z-50 bg-stone-800 hover:bg-black"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                        <div class="md:col-span-1 text-left md:text-right md:pr-8 pt-2">
+                            <span class="text-2xl font-serif text-sage-600 font-bold editable-text" contenteditable="true">2023</span>
+                        </div>
+                        <div class="md:col-span-4 space-y-4 border-l-2 border-stone-100 pl-6 md:pl-0 md:border-l-0">
+                            <div class="year-papers-container space-y-4">
+                                <div class="paper-card bg-white p-6 rounded-lg shadow-sm border border-stone-100 hover:shadow-md transition-shadow relative group/paper removable-item">
+                                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                                    <h4 class="text-lg font-bold text-stone-800 mb-1 editable-text" contenteditable="true">Heterostructure charge transfer dynamics on self-assembled ZnO</h4>
+                                    <p class="text-sm text-stone-500 italic mb-2 editable-text" contenteditable="true">Chemosphere 323, 138239</p>
+                                    <p class="text-stone-600 leading-relaxed text-sm mb-3 editable-text" contenteditable="true"><strong>Thongam, D. D. & Chaturvedi, H.</strong></p>
+                                    <div class="flex flex-wrap gap-2 items-center mt-2">
+                                        <a href="#" target="_blank" class="inline-block px-4 py-2 bg-stone-100 text-stone-600 text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-sage-500 hover:text-white transition-colors">View Article</a>
+                                        <button onclick="updateLink(this)" class="admin-only p-2 text-sage-600 hover:text-sage-800 hover:bg-sage-50 rounded-full transition-colors" title="Change Link">
+                                            <i data-lucide="link" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="addPaperToYear(this)" class="admin-only w-full py-3 border-2 border-dashed border-sage-200 text-sage-500 text-sm font-bold uppercase tracking-wide hover:bg-sage-50 transition-colors rounded-lg flex justify-center items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Add Paper to this Year
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="Sketch" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+                <div class="text-center mb-10 md:mb-12">
+                    <h3 class="text-sage-600 font-bold tracking-widest uppercase text-sm mb-3">Visual Diary</h3>
+                    <h2 class="font-serif text-3xl md:text-4xl text-stone-800">Sketches</h2>
+                </div>
+
+                <button onclick="addItem('photo-grid', 'photo')" class="admin-btn-add admin-only">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> Add New Photo
+                </button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="photo-grid">
+                    <div class="relative group overflow-hidden h-72 w-full bg-stone-200 removable-item">
+                        <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <img src="devPhoto1.jpeg" class="photo-img w-full h-full object-cover rounded-sm transition-transform duration-700 group-hover:scale-105" alt="Photo">
+                        <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                        <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only"><i data-lucide="camera" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="relative group overflow-hidden h-72 w-full bg-stone-200 removable-item">
+                        <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <img src="DevPhoto2.jpeg" class="photo-img w-full h-full object-cover rounded-sm transition-transform duration-700 group-hover:scale-105" alt="Photo">
+                        <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                        <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only"><i data-lucide="camera" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="relative group overflow-hidden h-72 w-full bg-stone-200 removable-item">
+                        <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <img src="DevPhoto3.jpeg" class="photo-img w-full h-full object-cover rounded-sm transition-transform duration-700 group-hover:scale-105" alt="Photo">
+                        <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                        <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only"><i data-lucide="camera" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="youtube" class="page-section">
+             <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+                
+                <div class="text-center mb-10 md:mb-16">
+                    <h3 class="text-sage-600 font-bold tracking-widest uppercase text-sm mb-3">Media</h3>
+                    <h2 class="font-serif text-3xl md:text-4xl text-stone-800 mb-6">YouTube Channel</h2>
+                    
+                    <div class="inline-block relative">
+                        <a href="https://www.youtube.com/@unsocialbutterfly-y9y" id="channel-link" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg">
+                            <i class="fab fa-youtube text-xl"></i> Visit My Channel
+                        </a>
+                        <button onclick="changeChannelLink()" class="admin-btn-upload admin-only !relative !top-0 !left-0 !translate-x-0 !translate-y-0 ml-2 shadow-none border border-sage-500">Edit Link</button>
+                    </div>
+                </div>
+
+                <div class="mb-16">
+                    <h3 class="text-2xl font-serif text-stone-800 mb-6 border-l-4 border-sage-500 pl-4">Featured Video</h3>
+                    <div class="relative group removable-item shadow-2xl rounded-xl overflow-hidden bg-black">
+                         <div class="aspect-video w-full">
+                             <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Featured Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                         </div>
+                         <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs"><i data-lucide="youtube" class="w-4 h-4"></i> Change Featured Video</button>
+                         <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+                             <h2 class="text-2xl font-bold editable-text" contenteditable="true">Featured Research Presentation</h2>
+                             <p class="text-stone-300 editable-text" contenteditable="true">Highlighting our latest breakthrough in nanomaterial synthesis.</p>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="mb-16">
+                    <div class="flex justify-between items-end mb-6 border-b border-stone-200 pb-2">
+                        <h3 class="text-xl font-serif text-stone-800">Recent Uploads</h3>
+                        <button onclick="addItem('video-grid', 'video')" class="admin-btn-add-sm admin-only !m-0">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Video
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8" id="video-grid">
+                        <div class="bg-white border border-stone-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 relative group removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="aspect-video bg-black relative">
+                                 <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                 <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs"><i data-lucide="youtube" class="w-4 h-4"></i> Change Video Link</button>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-serif text-xl text-stone-800 mb-2 editable-text" contenteditable="true">Lab Demonstration</h3>
+                                <p class="text-stone-600 text-sm leading-relaxed mb-1 editable-text" contenteditable="true">A walkthrough of our synthesis process.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-end mb-6 border-b border-stone-200 pb-2">
+                        <h3 class="text-xl font-serif text-stone-800 flex items-center gap-2"><i class="fab fa-youtube text-red-600"></i> Shorts</h3>
+                        <button onclick="addItem('shorts-grid', 'short')" class="admin-btn-add-sm admin-only !m-0">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Short
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="shorts-grid">
+                        <div class="bg-black rounded-xl overflow-hidden shadow-lg relative group removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="aspect-[9/16] w-full relative">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs !w-[90%]"><i data-lucide="youtube" class="w-4 h-4"></i> Change Short Link</button>
+                            </div>
+                        </div>
+                         <div class="bg-black rounded-xl overflow-hidden shadow-lg relative group removable-item">
+                            <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="aspect-[9/16] w-full relative">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/M7lc1UVf-VE" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs !w-[90%]"><i data-lucide="youtube" class="w-4 h-4"></i> Change Short Link</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="page-section">
+            <div class="max-w-5xl mx-auto px-6 py-16 md:py-24">
+                <div class="text-center mb-16">
+                    <h2 class="font-serif text-4xl md:text-5xl text-stone-800 mb-6">Let's Connect</h2>
+                    <p class="text-stone-500 font-light text-lg max-w-2xl mx-auto leading-relaxed editable-text" contenteditable="true">
+                        I am always open to discussing new research collaborations, speaking opportunities, or simply chatting about psychology and art.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 max-w-3xl mx-auto">
+                    <div class="flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 bg-sage-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-sage-100 transition-colors">
+                            <i class="fas fa-map-marker-alt text-sage-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-stone-800 uppercase text-xs tracking-widest mb-4">University Lab</h4>
+                        <div class="text-stone-600 font-light leading-relaxed editable-text" contenteditable="true">
+                            Department of Energy Science<br>
+                            IIT Guwahati<br>
+                            Assam, India 781039
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 bg-sage-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-sage-100 transition-colors">
+                            <i class="fas fa-envelope text-sage-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-stone-800 uppercase text-xs tracking-widest mb-4">Email</h4>
+                        <a href="mailto:devi176151105@iitg.ac.in" class="text-stone-600 hover:text-sage-600 font-light text-lg border-b border-transparent hover:border-sage-200 transition-all editable-text" contenteditable="true">
+                            devi176151105@iitg.ac.in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="login-modal" class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-lg w-full max-w-md shadow-2xl relative overflow-hidden">
+            <div class="bg-sage-600 p-6 text-center relative">
+                <button onclick="toggleLoginModal()" class="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center shadow-lg mb-4"><i data-lucide="lock" class="w-8 h-8 text-sage-600"></i></div>
+                <h3 class="text-2xl font-serif font-bold text-white">Admin Login</h3>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-stone-500 uppercase tracking-wider">Email</label>
+                    <div class="relative"><i data-lucide="mail" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i><input type="email" id="auth-email" class="w-full pl-10 pr-4 py-2.5 rounded border border-gray-200 outline-none" placeholder="admin@example.com"></div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-stone-500 uppercase tracking-wider">Password</label>
+                    <div class="relative"><i data-lucide="key" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i><input type="password" id="auth-password" class="w-full pl-10 pr-4 py-2.5 rounded border border-gray-200 outline-none" placeholder="••••••••"></div>
+                </div>
+                <div id="login-error" class="hidden text-red-500 text-sm text-center font-medium bg-red-50 p-2 rounded">Invalid credentials.</div>
+                <button onclick="handleLogin()" id="login-submit-btn" class="w-full bg-sage-600 text-white font-bold py-3 rounded hover:bg-sage-700 transition-all shadow-lg mt-2 flex justify-center items-center gap-2 uppercase tracking-wide text-sm">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-btn" class="floating-action-btn flex gap-2">
+        <button onclick="saveChanges()" class="bg-sage-600 text-white px-6 py-3 rounded-full shadow-2xl font-bold flex items-center gap-2 hover:bg-sage-700 transition-all cursor-pointer border border-sage-500">
+            <i data-lucide="save" class="w-5 h-5"></i> Save Changes
+        </button>
+    </div>
+
+    <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800 mt-auto">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
+            <div class="mb-2 md:mb-0">
+                <h3 class="font-serif text-2xl text-stone-200 mb-1">Monalisa Sahoo</h3>
+                <p class="text-xs text-stone-500 font-light">Research, Writing, & Sketching.</p>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-stone-400 hover:text-white transition-colors"><i class="fab fa-linkedin text-xl"></i></a>
+                <a href="#" class="text-stone-400 hover:text-white transition-colors"><i class="fab fa-researchgate text-xl"></i></a>
+            </div>
+            <div class="text-[10px] text-stone-600 font-light uppercase tracking-wider">
+                &copy; Monalisa Sahoo. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- AUTH UI UTILS ---
+        window.toggleLoginModal = function() {
+            const modal = document.getElementById('login-modal');
+            modal.classList.toggle('open');
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        window.setEditMode = function(enable) {
+            const editableElements = document.querySelectorAll('.editable-text');
+            const saveBtn = document.getElementById('save-btn');
+            const loginBtnText = document.getElementById('nav-login-text');
+            const loginBtn = document.getElementById('nav-login-btn');
+
+            if (enable) {
+                document.body.classList.add('editing-active');
+                editableElements.forEach(el => el.contentEditable = "true");
+                saveBtn.classList.add('visible');
+                loginBtnText.innerText = "Logout";
+                loginBtn.onclick = window.handleLogout; 
+                loginBtn.classList.add('text-red-500', 'bg-red-50');
+            } else {
+                document.body.classList.remove('editing-active');
+                editableElements.forEach(el => el.contentEditable = "false");
+                saveBtn.classList.remove('visible');
+                loginBtnText.innerText = "Sign In";
+                loginBtn.onclick = window.toggleLoginModal;
+                loginBtn.classList.remove('text-red-500', 'bg-red-50');
+            }
+        }
+
+        // --- NEW RESEARCH MODAL LOGIC ---
+        window.toggleResearchModal = function(btn) {
+            let modal;
+            if (btn.closest('.research-modal')) {
+                modal = btn.closest('.research-modal');
+            } else {
+                const card = btn.closest('.group\\/card');
+                modal = card.querySelector('.research-modal');
+            }
+            if (modal) {
+                modal.classList.toggle('open');
+                if(window.lucide) lucide.createIcons();
+            }
+        }
+
+        // --- LINK EDIT LOGIC ---
+        window.updateLink = function(btn) {
+            // Find the previous sibling element which is the <a> tag
+            const linkTag = btn.previousElementSibling;
+            const currentHref = linkTag.getAttribute('href');
+            
+            // Prompt user for new URL
+            const newUrl = prompt("Enter the article URL:", currentHref === '#' ? '' : currentHref);
+            
+            if (newUrl) {
+                linkTag.href = newUrl;
+                linkTag.target = "_blank"; // Ensure it opens in new tab
+            }
+        }
+
+        // --- DYNAMIC ITEMS LOGIC ---
+        window.addItem = function(containerId, type) {
+            const container = document.getElementById(containerId);
+            let newItem = '';
+
+            if (type === 'year-group') {
+                newItem = `
+                <div class="year-group relative grid md:grid-cols-5 gap-8 group/year removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only z-50 bg-stone-800 hover:bg-black"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                    <div class="md:col-span-1 text-left md:text-right md:pr-8 pt-2">
+                        <span class="text-2xl font-serif text-sage-600 font-bold editable-text" contenteditable="true">202X</span>
+                    </div>
+                    <div class="md:col-span-4 space-y-4 border-l-2 border-stone-100 pl-6 md:pl-0 md:border-l-0">
+                        <div class="year-papers-container space-y-4">
+                            <div class="paper-card bg-white p-6 rounded-lg shadow-sm border border-stone-100 hover:shadow-md transition-shadow relative group/paper removable-item">
+                                <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                                <h4 class="text-lg font-bold text-stone-800 mb-1 editable-text" contenteditable="true">New Paper Title</h4>
+                                <p class="text-sm text-stone-500 italic mb-2 editable-text" contenteditable="true">Journal Name</p>
+                                <p class="text-stone-600 leading-relaxed text-sm mb-3 editable-text" contenteditable="true"><strong>Author Name</strong>, Co-Authors...</p>
+                                <div class="flex flex-wrap gap-2 items-center mt-2">
+                                    <a href="#" target="_blank" class="inline-block px-4 py-2 bg-stone-100 text-stone-600 text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-sage-500 hover:text-white transition-colors">View Article</a>
+                                    <button onclick="updateLink(this)" class="admin-only p-2 text-sage-600 hover:text-sage-800 hover:bg-sage-50 rounded-full transition-colors" title="Change Link">
+                                        <i data-lucide="link" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="addPaperToYear(this)" class="admin-only w-full py-3 border-2 border-dashed border-sage-200 text-sage-500 text-sm font-bold uppercase tracking-wide hover:bg-sage-50 transition-colors rounded-lg flex justify-center items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add Paper to this Year
+                        </button>
+                    </div>
+                </div>`;
+                const submittedGroup = document.getElementById('fixed-submitted-group');
+                if (submittedGroup) submittedGroup.insertAdjacentHTML('afterend', newItem);
+                else container.insertAdjacentHTML('afterbegin', newItem);
+            }
+            else if (type === 'research-interest') {
+                const uniqueId = 'modal-gallery-' + Date.now();
+                newItem = `
+                <div class="bg-white p-8 shadow-sm rounded-lg hover:shadow-lg transition-shadow border border-transparent hover:border-sage-200 relative group/card removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <i class="fas fa-atom text-sage-500 text-3xl mb-4"></i>
+                    <h3 class="font-serif text-xl text-stone-800 mb-3 editable-text" contenteditable="true">New Interest Title</h3>
+                    <p class="text-stone-600 text-sm leading-relaxed mb-4 editable-text" contenteditable="true">Brief description of the research interest...</p>
+                    <button onclick="toggleResearchModal(this)" class="text-sage-600 text-xs font-bold uppercase tracking-wider hover:text-stone-800 flex items-center gap-1">Read More <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+                    
+                    <div class="research-modal">
+                        <div class="max-w-4xl mx-auto mt-20 p-8 md:p-12 relative bg-white shadow-2xl rounded-lg">
+                            <button onclick="toggleResearchModal(this)" class="absolute top-6 right-6 text-stone-400 hover:text-stone-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                            <div class="flex items-center gap-4 mb-8">
+                                <i class="fas fa-atom text-sage-500 text-4xl"></i>
+                                <h2 class="font-serif text-3xl md:text-4xl text-stone-800 editable-text" contenteditable="true">New Interest Title</h2>
+                            </div>
+                            <div class="prose prose-stone max-w-none text-stone-600 leading-loose">
+                                <button onclick="addItem('${uniqueId}', 'photo')" class="admin-btn-add-sm admin-only"><i data-lucide="image" class="w-3 h-3"></i> Add Figure</button>
+                                <div id="${uniqueId}" class="grid grid-cols-2 gap-4 mb-6"></div>
+                                <div class="editable-text min-h-[100px]" contenteditable="true">
+                                    <p>Detailed description of the research project goes here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', newItem);
+            }
+            else if (type === 'ongoing-work') {
+                newItem = `
+                <div class="flex flex-col md:flex-row gap-6 relative group removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only !left-auto !right-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <div class="w-32 flex-shrink-0 pt-1">
+                        <span class="inline-block px-3 py-1 bg-sage-200 text-sage-800 text-[10px] font-bold uppercase tracking-widest rounded-sm editable-text" contenteditable="true">STATUS</span>
+                        <div class="text-stone-400 text-xs mt-2 italic editable-text" contenteditable="true">Note/Date</div>
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="text-lg font-bold text-stone-800 mb-2 editable-text" contenteditable="true">New Work Title</h4>
+                        <p class="text-stone-600 text-sm leading-relaxed editable-text" contenteditable="true">Description of the ongoing work...</p>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', newItem);
+            }
+            else if (type === 'education') {
+                newItem = `
+                <li class="flex items-center relative group/item removable-item animate-fade-in">
+                    <i class="fas fa-graduation-cap text-sage-500 w-8"></i>
+                    <span class="editable-text" contenteditable="true"><strong>New Degree</strong>, University</span>
+                    <button onclick="deleteItem(this)" class="admin-btn-delete-sm admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </li>`;
+                container.insertAdjacentHTML('beforeend', newItem);
+            }
+            else if (type === 'skill') {
+                newItem = `
+                <span class="relative group/item removable-item inline-flex items-center px-3 py-1 bg-sage-50 text-sage-700 rounded-full text-xs font-bold tracking-wide border border-sage-100 animate-fade-in">
+                    <span class="editable-text" contenteditable="true">New Skill</span>
+                    <button onclick="deleteItem(this)" class="ml-2 text-sage-400 hover:text-red-500 admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                </span>`;
+                container.insertAdjacentHTML('beforeend', newItem);
+            }
+            else if (type === 'photo') {
+                newItem = `
+                <div class="relative group overflow-hidden h-72 w-full bg-stone-200 removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=1000&auto=format&fit=crop" class="photo-img w-full h-full object-cover rounded-sm transition-transform duration-700 group-hover:scale-105" alt="New Photo">
+                    <input type="file" accept="image/*" class="hidden-file-input hidden" onchange="handleImageUpload(this)">
+                    <button onclick="triggerUpload(this)" class="admin-btn-upload admin-only"><i data-lucide="camera" class="w-4 h-4"></i></button>
+                </div>`;
+                container.insertAdjacentHTML('afterbegin', newItem);
+            }
+            else if (type === 'video') {
+                newItem = `
+                <div class="bg-white border border-stone-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 relative group removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <div class="aspect-video bg-black relative">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                         <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs"><i data-lucide="youtube" class="w-4 h-4"></i> Change Video Link</button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-serif text-xl text-stone-800 mb-2 editable-text" contenteditable="true">New Video Title</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-1 editable-text" contenteditable="true">Video description...</p>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('afterbegin', newItem);
+            }
+            else if (type === 'short') {
+                newItem = `
+                <div class="bg-black rounded-xl overflow-hidden shadow-lg relative group removable-item animate-fade-in">
+                    <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <div class="aspect-[9/16] w-full relative">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <button onclick="changeVideoId(this)" class="admin-btn-upload admin-only text-xs !w-[90%]"><i data-lucide="youtube" class="w-4 h-4"></i> Change Short Link</button>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('afterbegin', newItem);
+            }
+            
+            if(window.lucide) lucide.createIcons();
+        }
+
+        window.addPaperToYear = function(btn) {
+            const paperContainer = btn.previousElementSibling;
+            const paperTemplate = `
+            <div class="paper-card bg-white p-6 rounded-lg shadow-sm border border-stone-100 hover:shadow-md transition-shadow relative group/paper removable-item animate-fade-in">
+                <button onclick="deleteItem(this)" class="admin-btn-delete admin-only"><i data-lucide="x" class="w-3 h-3"></i></button>
+                <h4 class="text-lg font-bold text-stone-800 mb-1 editable-text" contenteditable="true">New Paper Title</h4>
+                <p class="text-sm text-stone-500 italic mb-2 editable-text" contenteditable="true">Journal Name</p>
+                <p class="text-stone-600 leading-relaxed text-sm mb-3 editable-text" contenteditable="true"><strong>Author Name</strong>, Co-Authors...</p>
+                <div class="flex flex-wrap gap-2 items-center mt-2">
+                    <a href="#" target="_blank" class="inline-block px-4 py-2 bg-stone-100 text-stone-600 text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-sage-500 hover:text-white transition-colors">View Article</a>
+                    <button onclick="updateLink(this)" class="admin-only p-2 text-sage-600 hover:text-sage-800 hover:bg-sage-50 rounded-full transition-colors" title="Change Link">
+                        <i data-lucide="link" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>`;
+            paperContainer.insertAdjacentHTML('beforeend', paperTemplate);
+            if(window.lucide) lucide.createIcons();
+            if (document.body.classList.contains('editing-active')) {
+                paperContainer.lastElementChild.querySelectorAll('.editable-text').forEach(el => el.contentEditable = "true");
+            }
+        }
+
+        window.deleteItem = function(btn) {
+            if(confirm("Delete this item?")) {
+                btn.closest('.removable-item').remove();
+            }
+        }
+
+        window.triggerUpload = function(btn) {
+            const input = btn.previousElementSibling; 
+            input.click();
+        }
+
+        window.handleImageUpload = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const parent = input.parentElement;
+                    let img = parent.querySelector('img');
+                    if(img) img.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        window.changeVideoId = function(btn) {
+            // FIX: Find the iframe by looking inside the parent container
+            // This works for Featured (nested in div) AND Shorts/Uploads (direct sibling)
+            const targetIframe = btn.parentElement.querySelector('iframe');
+            
+            if (!targetIframe) {
+                alert("Error: Could not find the video player to update.");
+                return;
+            }
+
+            const url = prompt("Enter full YouTube Video or Shorts URL:");
+            if (url) {
+                // Regex to extract video ID from standard or Shorts URLs
+                // Covers: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID
+                const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=|shorts\/)|youtu\.be\/)([^"&?\/\s]{11})/i;
+                const match = url.match(regExp);
+
+                if (match && match[1].length === 11) {
+                    const videoId = match[1];
+                    targetIframe.src = "https://www.youtube.com/embed/" + videoId;
+                } else {
+                    alert("Invalid YouTube URL. Please try again.");
+                }
+            }
+        }
+
+        window.changeChannelLink = function() {
+            const linkEl = document.getElementById('channel-link');
+            const newUrl = prompt("Enter your YouTube Channel URL:", linkEl.href);
+            if(newUrl) {
+                linkEl.href = newUrl;
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const activeSection = document.getElementById(tabId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+             const btn = document.getElementById('mobile-menu-btn');
+             const menu = document.getElementById('mobile-menu');
+             if(btn) btn.addEventListener('click', () => { menu.classList.toggle('hidden'); });
+
+             // --- CRITICAL FIX: ENABLE EDIT MODE BY DEFAULT FOR TESTING ---
+             // This makes the buttons appear without logging in.
+             window.setEditMode(true);
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
+
+        // UPDATED FIREBASE CONFIG (mona-bb5da)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAm4bKgh4H9MEmYKPGnG_sDuatomexaWvI",
+            authDomain: "mona-bb5da.firebaseapp.com",
+            projectId: "mona-bb5da",
+            storageBucket: "mona-bb5da.firebasestorage.app",
+            messagingSenderId: "843409401054",
+            appId: "1:843409401054:web:c268a0bdc3784047a60e4f",
+            measurementId: "G-WY5KB5P7E4"
+        };
+
+        let auth, db, analytics;
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            analytics = getAnalytics(app);
+            console.log("Firebase Initialized");
+        } catch (e) { console.error("Firebase Error:", e); }
+
+        window.handleLogin = async function() {
+            if (!auth) { alert("Firebase not set up."); return; }
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-password').value;
+            const btn = document.getElementById('login-submit-btn');
+            btn.innerText = "Signing in...";
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                window.toggleLoginModal();
+            } catch (error) {
+                document.getElementById('login-error').classList.remove('hidden');
+            } finally {
+                btn.innerText = "Sign In";
+            }
+        }
+
+        window.handleLogout = async function() {
+            if (auth) await signOut(auth);
+            location.reload();
+        }
+
+        if (auth) {
+            onAuthStateChanged(auth, (user) => window.setEditMode(!!user));
+        }
+
+        window.saveChanges = async function() {
+            if (!auth.currentUser) return;
+            const btn = document.querySelector('#save-btn button');
+            const originalText = btn.innerHTML;
+            btn.innerText = "Saving...";
+
+            // Capture the updated Channel Link
+            const channelLink = document.getElementById('channel-link').href;
+
+            const contentData = {
+                home: document.getElementById('home').innerHTML,
+                about: document.getElementById('about').innerHTML,
+                research: document.getElementById('research').innerHTML,
+                publication: document.getElementById('publication').innerHTML,
+                Sketch: document.getElementById('Sketch').innerHTML,
+                youtube: document.getElementById('youtube').innerHTML,
+                contact: document.getElementById('contact').innerHTML,
+                channelLink: channelLink 
+            };
+
+            try {
+                await setDoc(doc(db, "artifacts", "main"), contentData);
+                btn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Saved!`;
+                setTimeout(() => { btn.innerHTML = originalText; if(window.lucide) lucide.createIcons(); }, 2000);
+            } catch (e) {
+                alert("Error saving: " + e.message);
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function loadContentFromFirestore() {
+            console.log("Loading content from Database...");
+            
+            try {
+                const docRef = doc(db, "artifacts", "main");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Restore HTML content
+                    if(data.home) document.getElementById('home').innerHTML = data.home;
+                    if(data.about) document.getElementById('about').innerHTML = data.about;
+                    if(data.research) document.getElementById('research').innerHTML = data.research;
+                    if(data.publication) document.getElementById('publication').innerHTML = data.publication;
+                    if(data.Sketch) document.getElementById('Sketch').innerHTML = data.Sketch;
+                    if(data.youtube) document.getElementById('youtube').innerHTML = data.youtube;
+                    if(data.contact) document.getElementById('contact').innerHTML = data.contact;
+                    
+                    // Restore specific link attributes
+                    if(data.channelLink) document.getElementById('channel-link').href = data.channelLink;
+                    
+                    if(auth.currentUser) window.setEditMode(true);
+                }
+            } catch (e) {
+                console.error("Error loading:", e);
+            } finally {
+                document.getElementById('global-loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('global-loader').remove(), 500);
+                window.switchTab('home'); 
+                if(window.lucide) lucide.createIcons();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContentFromFirestore();
+        });
+    </script>
+</body>
+</html>
